@@ -1,0 +1,24 @@
+name: Update QR
+
+on:
+  schedule:
+    - cron: "30 8 * * *"   # 08:30 UTC every day
+    - cron: "0 12 * * *"   # 12:00 UTC every day
+  workflow_dispatch:
+
+jobs:
+  call-update-qr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Update QR API
+        run: |
+          echo "Calling Update QR API..."
+          status=$(curl -s -o response.txt -w "%{http_code}" "${{ secrets.UPDATE_QR_URL }}")
+          echo "----- response body -----"
+          cat response.txt || true
+          echo "----- end response body -----"
+          echo "HTTP status: $status"
+          if [ "$status" -ne 200 ]; then
+            echo "❌ Update QR API call failed"
+            exit 1
+          fi
