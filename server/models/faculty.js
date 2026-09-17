@@ -14,6 +14,7 @@ const facultySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  sem:[String],
   email: {
     type: String,
     required: true,

@@ -1,0 +1,38 @@
+const mongoose = require('mongoose');
+
+const BackupAttendanceSchema = new mongoose.Schema({
+    sem: {
+        type: String,
+        required: true
+    },
+
+    batch: {
+        type: String,
+        required: true
+    },
+
+    attendanceRecords: {
+        FN: {
+            type: Map,
+            of: [String],
+            default: {}
+        },
+
+        AN: {
+            type: Map,
+            of: [String],
+            default: {}
+        }
+    }
+
+}, { timestamps: true });
+
+BackupAttendanceSchema.index(
+    { sem: 1, batch: 1 },
+    { unique: true }
+);
+
+const BackupAttendance =
+    mongoose.model('BackupAttendance', BackupAttendanceSchema);
+
+module.exports = BackupAttendance;

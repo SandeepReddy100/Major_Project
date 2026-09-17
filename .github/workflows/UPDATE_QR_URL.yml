@@ -1,0 +1,77 @@
+name: Update Scores (Debug Mode)
+
+on:
+  schedule:
+    # Runs at 11:30 AM UTC, which is 5:00 PM IST every day
+    - cron: "30 11 * * *"
+  workflow_dispatch:
+
+jobs:
+  call-update-scores:
+    runs-on: ubuntu-latest
+    env:
+      CRON_URL: ${{ secrets.UPDATE_QR_V2 }}   # e.g. https://cdc-portal-c1m8.onrender.com/api/Admin/updateScores
+    steps:
+      - name: Call Update Scores API (POST, retries, debug)
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "==== Update Scores workflow starting ===="
+          echo "UTC time: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+
+          if [ -z "${CRON_URL:-}" ]; then
+            echo "ERROR: CRON_URL is empty. Please set the repository secret UPDATE_SCORES_URL." >&2
+            exit 1
+          fi
+
+          attempts=3
+          wait=6
+
+          for i in $(seq 1 $attempts); do
+            echo
+            echo "----- Attempt $i/$attempts -----"
+            hdrs_file="response_headers_attempt_${i}.txt"
+            body_file="response_body_attempt_${i}.txt"
+
+            # Run curl, capture HTTP status and response/body/headers
+            set +e
+            http_code=$(curl -sS -w "%{http_code}" -o "${body_file}" -D "${hdrs_file}" \
+              -X POST \
+              -H "Content-Type: application/json" \
+              -H "Accept: application/json" \
+              --max-time 120 -L "${CRON_URL}")
+            curl_exit=$?
+            set -e
+
+            if [ $curl_exit -ne 0 ] && [ -z "$http_code" ]; then
+              echo "curl returned exit code $curl_exit (network/timeout)."
+              http_code="000"
+            fi
+
+            echo "HTTP status: $http_code"
+            echo "---- Response headers ----"
+            sed -n '1,200p' "$hdrs_file" || true
+            echo "---- Response body ----"
+            sed -n '1,1000p' "$body_file" || true
+
+            # Success => 2xx
+            if [[ "$http_code" =~ ^2 ]]; then
+              echo "✅ API returned $http_code — success."
+              exit 0
+            fi
+
+            # Retryable statuses: 5xx, 429, or network error (000)
+            if [[ "$http_code" =~ ^5 ]] || [ "$http_code" == "429" ] || [ "$http_code" == "000" ]; then
+              echo "Retryable status ($http_code). Sleeping ${wait}s and retrying..."
+              sleep $wait
+              wait=$((wait*2))
+              continue
+            fi
+
+            # Non-retryable (4xx / other) -> fail workflow immediately
+            echo "❌ Non-retryable status ($http_code). Failing workflow."
+            exit 1
+          done
+
+          echo "❌ All $attempts attempts failed. See logs above."
+          exit 1

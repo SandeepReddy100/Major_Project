@@ -19,12 +19,16 @@ const attendanceSchema = new mongoose.Schema({
   },
   dailyLogs: [
     {
-      date: String, // format: "YYYY-MM-DD"
+      date: String,
       course: String,
       status: { type: String, enum: ['present', 'absent'] }
     }
-  ],
-  lastUpdated: { type: Date, default: Date.now }
+  ]
+},{
+  timestamps: true ,
+  toObject: { retainKeyOrder: true }, 
+  toJSON: { retainKeyOrder: true }
 });
 
-module.exports = attendanceSchema;
+// Export correctly
+module.exports = { attendanceSchema };

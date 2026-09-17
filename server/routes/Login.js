@@ -1,7 +1,11 @@
-const express=require('express');
-const { HandleLogin } = require('../controllers/Login');
-const router=express.Router();
+const express = require("express");
+const router = express.Router();
+const { HandleLogin, HandleRefreshToken, HandleLogout } = require("../controllers/Login");
 
-router.post('/', HandleLogin);
+router.post("/login", HandleLogin);
+
+router.post("/refresh", HandleRefreshToken);
+
+router.post("/logout", HandleLogout);
 
 module.exports = router;

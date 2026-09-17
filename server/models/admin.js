@@ -15,6 +15,12 @@ const adminSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  Workspace_email: {
+    type: String
+  },
+  Workspace_password: {
+    type: String
+  },
   name : {
     type: String,
     required: true,

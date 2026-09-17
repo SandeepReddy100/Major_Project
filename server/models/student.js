@@ -6,11 +6,14 @@ const studentSchema = new mongoose.Schema({
   password: { type: String, required: true },  
   branch: { type: String },
   batch: { type: String },
+  sem:{ type: String },
   email: { type: String, required: true },
-  qrData: { type: String },   
-  qrLink: { type: String },   
+  qrData: { type: String, default:""},   
+  qrLink: { type: String, default:"" },   
 }, {
-  timestamps: true 
+  timestamps: true ,
+  toObject: { retainKeyOrder: true }, 
+  toJSON: { retainKeyOrder: true }
 });
 
-module.exports = mongoose.model('Student', studentSchema);
+module.exports = { studentSchema };

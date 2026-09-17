@@ -1,21 +1,23 @@
 const mongoose = require("mongoose");
 
 const codingSchema = new mongoose.Schema({
-  rollno: String,
+  rollno: { type: String, required: true, unique: true },
+  name: { type: String, required: true },
   branch: String,
   batch: String,
+  
   handles: {
-    leetcode: String,
-    gfg: String,
-    codechef: String,
-    hackerank: String
+    type: Map,
+    of: String,
+    default: {}
   },
+  sem:{ type: String },
   scores: {
-    leetcode: { type: Number, default: 0 },
-    gfg: { type: Number, default: 0 },
-    codechef: { type: Number, default: 0 },
-    hackerank: { type: Number, default: 0 }
+    type: Map,
+                of: Number,
+    default: {}
   },
+
   totalScore: { type: Number, default: 0 },
   lastUpdated: { type: Date, default: Date.now }
 });

@@ -1,19 +1,31 @@
 const express = require("express");
-const { getLeaderBoardData, HandleChangePassword } = require("../services/CommonRoutes");
-const { getDashboardData, HandleGetAnnouncements, getLogData, getProfileData } = require("../controllers/Student");
-const { verifyAccess, authorize } = require("../middlewares/Auth"); // ✅ import auth
+const {
+  getDashboardData,
+  HandleGetAnnouncements,
+  getLogData,
+  getProfileData,
+  updateCodingHandles,
+  getTimeTable
+} = require("../controllers/Student");
+const { verifyAccess, authorize } = require("../middleware/auth");
 
 const router = express.Router();
 
-// ✅ Protect all routes in this file (student only)
-router.use(verifyAccess, authorize("student"));
+router.use(verifyAccess);
 
-// Routes
-router.post("/getDashboardData", getDashboardData);
-router.patch("/UpdatePassword", HandleChangePassword);
-router.get("/getLeaderBoardData/:rollno", getLeaderBoardData);
-router.get("/getLogData/:rollno", getLogData);
-router.post("/getProfileData", getProfileData);
-router.get("/GetAnnouncements/:batch", HandleGetAnnouncements);
+router.use(authorize("student"));
+
+router.get("/get-dashboard-data", getDashboardData);
+
+router.get("/get-log-data", getLogData);
+
+router.get("/get-profile-data", getProfileData);
+
+router.get("/get-timetable-data", getTimeTable);
+
+router.patch("/update-coding-handles", updateCodingHandles);
+
+router.get("/get-announcements", HandleGetAnnouncements);
+
 
 module.exports = router;

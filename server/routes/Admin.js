@@ -1,122 +1,160 @@
-const express=require('express');
-const {HandleSessionAttendanceReportPDF, 
-      HandleSessionAttendanceReportExcel,  
-      HandleMonthlyAttendanceReportExcel,
-      getDashboardData,
-      addFaculty,
-      deleteFaculty,
-      updateFaculty,
-      addStudent,
-      deleteStudent,
-      updateStudent,
-      HandleUpdateAttendance, 
-      getViewStudents,
-      getStudentsForAttendanceUpdation,
-      getViewFaculty,
-      getProfileData,
-      deleteAttendanceLog} = require('../controllers/Admin');
+const router = require("express").Router();
+const { createSemesterSetup,
+    getAllCollections,
+    deleteCollections,
+    addStudents,
+    createTimeTable,
+    uploadTimeTable,
+    getTimeTable,
+    modifySemesterSetup,
+    getViewStudents,
+    addStudent,
+    deleteStudent,
+    updateStudent,
+    getViewFaculty,
+    addFaculty,
+    deleteFaculty,
+    updateFaculty,
+    getStudentsForAttendanceUpdation,
+    HandleUpdateAttendance,
+    deleteAttendanceLog,
+    HandleSessionAttendanceReportPDF,
+    HandleSessionAttendanceReportExcel,
+    HandleMonthlyAttendanceReportExcel,
+    getDashboardData,
+    getProfileData,
+    sendMailToBatches,
+    sendMailToIndividual,
+    modifyTimeTable,
+    getAllTimetables,
+    CreateNewAdmin,
+    deleteTimetable,
+    modifyCollection,
+    downloadLeaderboardPDF,
+    downloadLeaderboardImage,
+    generatePasswordsForAllFaculty,
+    deleteBackup,
+    getAllBackups,
+    HandleCombinedAttendanceReport
+} = require("../controllers/Admin");
 
-const { updateAllStudentScores, generateAndStoreQrCodes } = require('../services/DynamicRoutes.js');
+const {validateAttendanceTotals } = require("../Scripts/AttendaceDaysSync");
+const {validateAndCleanDataController } = require("../Scripts/DocValidator");
 
-const { HandleChangePassword,
-        getViewStudentData, 
-        getLeaderBoardData, 
-        HandleResetPassword, 
-        HandleBatchAttendanceReportPDF, 
-        HandleBatchAttendanceReportExcel, 
-        HandleMarkAttendance,
-        getStudentsByBatch,
-        HandleSessionPostAttendance,
-        HandleMarkAttendanceMultipleBatches} = require('../services/CommonRoutes');
+const multer = require("multer");
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+const Coder = require("../models/coding");
 
-const { verifyAccess, authorize } = require("../middlewares/Auth");
-const router=express.Router();
+const { updateLeaderboard } = require("../workflows/Scores");
+const { verifyAccess, authorize } = require('../middleware/auth');
+const { generateAndStoreQrCodes } = require("../workflows/Qr");
 
 
-//-------------------------------   Manage Dynamic Routes  Start -----------------------------//
 
-
-router.post('/updateScores', updateAllStudentScores);
+router.post('/updateScores', updateLeaderboard);
 
 router.post('/updateQr', generateAndStoreQrCodes);
 
 
-//-------------------------------   Manage Dynamic Routes  End -----------------------------//
-
-// Protect all routes in this file (Admin only)
 router.use(verifyAccess, authorize("admin"));
 
 
+router.get("/view-students/:semname", getViewStudents);
 
-router.get("/attendance-batch-report-excel", HandleBatchAttendanceReportExcel);
+router.post("/add-student", addStudent);
 
-router.get("/attendance-batch-report-pdf", HandleBatchAttendanceReportPDF);
+router.delete("/delete-student", deleteStudent);
 
-router.get("/attendance-Session-report-excel", HandleSessionAttendanceReportExcel);
+router.patch("/update-student", updateStudent);
 
-router.get("/attendance-Session-report-pdf", HandleSessionAttendanceReportPDF);
+router.post("/send-mail-to-batches", sendMailToBatches);
 
-router.post('/Mark-Attendance', HandleMarkAttendance);
+router.post("/send-mail-to-individual", sendMailToIndividual);
 
-router.get('/attendance-monthly-excel', HandleMonthlyAttendanceReportExcel)
-
-router.patch('/UpdatePassword', HandleChangePassword);
-
-router.get('/getDashboardData',getDashboardData);
-
-router.get('/getProfileData/:adminId', getProfileData);
-
-router.get('/getLeaderboardData', getLeaderBoardData);
-
-router.get('/getViewStudentData', getViewStudentData);
-
-router.patch('/ResetPassword', HandleResetPassword);
-
-//-------------------------------   Manage Faculty Routes  Start    ----------------------------//
-
-router.get('/getViewFaculty',getViewFaculty)
-
-router.post('/addFaculty', addFaculty);
-
-router.delete('/deleteFaculty', deleteFaculty);
-
-router.patch('/updateFaculty', updateFaculty);
-
-//-------------------------------   Manage Faculty Routes  End      ----------------------------//
-
-
-//-------------------------------   Manage Student Routes  Start    ----------------------------//
-
-router.get('/getViewStudents',getViewStudents);
-
-router.post('/addStudent', addStudent);
-
-router.delete('/deleteStudent', deleteStudent);
-
-router.patch('/updateStudent', updateStudent);
-
-//-------------------------------   Manage Student Routes  End      ----------------------------//
-
-
-//-------------------------------   Manage Attendance Routes  Start -----------------------------//
-
-router.get('/getStudentsByBatch/:batch',getStudentsByBatch);
-
-router.post('/Mark-Session',HandleSessionPostAttendance);
-
-router.get('/getAbsenties', getStudentsForAttendanceUpdation);
-
-router.patch('/updateAttendance', HandleUpdateAttendance);
-
-router.delete('/deleterecord',deleteAttendanceLog);
-
-router.post('/MarkAllBatchAttendance',HandleMarkAttendanceMultipleBatches);
-
-
-//-------------------------------   Manage Attendance Routes  End -----------------------------//
+router.post("/update-leaderboard", updateLeaderboard);
 
 
 
 
+router.get("/view-faculty", getViewFaculty);
 
-module.exports=router;
+router.post("/add-faculty", addFaculty);
+
+router.delete("/delete-faculty", deleteFaculty);
+
+router.put("/update-faculty", updateFaculty);
+
+
+
+
+router.get("/get-students-for-attendance-updation", getStudentsForAttendanceUpdation);
+
+router.patch("/handle-update-attendance", HandleUpdateAttendance);
+
+router.delete("/delete-attendance-log", deleteAttendanceLog);
+
+
+
+router.post("/create-sem", createSemesterSetup);
+
+router.post("/modify-sem", modifySemesterSetup);
+
+router.get("/getcollections", getAllCollections);
+
+router.delete("/deletecollections", deleteCollections);
+
+router.post("/addstudents/upload", upload.single("file"), addStudents);
+
+router.post("/uploadtimetable", upload.single("file"), uploadTimeTable);
+
+router.post("/createtimetable", createTimeTable);
+
+router.get("/gettimetable", getTimeTable);
+
+router.patch("/modifytimetable", modifyTimeTable);
+
+router.get("/get-all-timetables", getAllTimetables);
+
+router.delete("/delete-timetable", deleteTimetable);
+
+router.put("/modify-collection", modifyCollection);
+
+
+
+
+router.get("/session-attendance-report-pdf", HandleSessionAttendanceReportPDF);
+
+router.get("/session-attendance-report-excel", HandleSessionAttendanceReportExcel);
+
+router.get("/monthly-attendance-report-excel", HandleMonthlyAttendanceReportExcel);
+
+router.get("/combined-attendance-report", HandleCombinedAttendanceReport);
+
+
+router.get("/dashboard-data", getDashboardData);
+
+router.get("/profile-data", getProfileData);
+
+router.post("/create-new-admin", CreateNewAdmin);
+
+router.get("/get-leaderboard", downloadLeaderboardPDF);
+
+router.get("/get-leaderboard-img", downloadLeaderboardImage);
+
+router.post('/generate-faculty-passwords', generatePasswordsForAllFaculty);
+
+
+router.delete("/delete-backup", deleteBackup);
+
+router.get("/get-all-backups", getAllBackups);
+
+// ----------------------------------------  Scripts  ---------------------------------------------------------------------
+
+
+router.put("/validate-attendance-totals", validateAttendanceTotals);
+
+router.put("/doc-validator", validateAndCleanDataController);
+
+
+module.exports = router;
