@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
+import {
     Trophy, Code, Database, Clock, Calendar,
-    ClipboardCheck, UserCog, BookOpen, Download
+    ClipboardCheck, UserCog, BookOpen, Download, AlertTriangle, Sparkles
 } from 'lucide-react';
 import Header from '../../components/Header';
 import Loader from '../../components/Loader'; // Import the custom Loader
@@ -306,6 +306,20 @@ const FacultyDashboard = () => {
                                         <div className="w-9 h-9 bg-white/30 rounded-xl flex items-center justify-center shadow-lg backdrop-blur-sm transform group-hover:rotate-12 transition-transform duration-300 flex-shrink-0"><UserCog className="w-5 h-5 text-purple-600" /></div>
                                     </div>
                                     <p className="text-xs text-gray-500 mt-auto">Modify student details or scores.</p>
+                                </div>
+                                <div onClick={() => navigate('/at-risk-students')} className="bg-gradient-to-br from-red-100 via-red-50 to-orange-50 rounded-2xl p-5 text-gray-800 shadow-lg transition-all hover:-translate-y-1 hover:scale-105 flex flex-col border border-white/20 relative cursor-pointer overflow-hidden group">
+                                    <div className="flex items-start justify-between mb-3">
+                                        <h3 className="font-bold text-sm leading-tight pr-2">At-Risk Students</h3>
+                                        <div className="w-9 h-9 bg-white/30 rounded-xl flex items-center justify-center shadow-lg backdrop-blur-sm transform group-hover:rotate-12 transition-transform duration-300 flex-shrink-0"><AlertTriangle className="w-5 h-5 text-red-600" /></div>
+                                    </div>
+                                    <p className="text-xs text-gray-500 mt-auto">Identify students requiring attendance intervention.</p>
+                                </div>
+                                <div onClick={() => navigate('/ai-assistant')} className="bg-gradient-to-br from-emerald-100 via-emerald-50 to-teal-50 rounded-2xl p-5 text-gray-800 shadow-lg transition-all hover:-translate-y-1 hover:scale-105 flex flex-col border border-white/20 relative cursor-pointer overflow-hidden group">
+                                    <div className="flex items-start justify-between mb-3">
+                                        <h3 className="font-bold text-sm leading-tight pr-2">AI Faculty Assistant</h3>
+                                        <div className="w-9 h-9 bg-white/30 rounded-xl flex items-center justify-center shadow-lg backdrop-blur-sm transform group-hover:rotate-12 transition-transform duration-300 flex-shrink-0"><Sparkles className="w-5 h-5 text-emerald-600" /></div>
+                                    </div>
+                                    <p className="text-xs text-gray-500 mt-auto">Ask questions about attendance, risk, and trends.</p>
                                 </div>
                             </div>
                         </div>

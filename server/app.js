@@ -35,6 +35,7 @@ const adminRoutes = require("./routes/Admin");
 const loginRoutes = require("./routes/Login");
 const studentRoutes = require("./routes/Student");
 const facultyRoutes = require("./routes/Faculty");
+const analyticsRoutes = require("./routes/Analytics");
 const commonRoutes = require("./routes/CommonRoutes");
 const { generateAndStoreQrCodes } = require("./workflows/Qr");
 const { updateLeaderboard } = require("./workflows/Scores");
@@ -47,6 +48,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/auth", loginRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/api/faculty", facultyRoutes);
+app.use("/api/analytics", analyticsRoutes);
 app.use("/api", commonRoutes);
 
 // 🔹 Connect DB first

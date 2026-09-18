@@ -20,6 +20,8 @@ const PostAttendance = lazy(() => import('./pages/CommonPages/PostAttendancePage
 const MultiBatchAttendancePage = lazy(() => import('./pages/CommonPages/MultiBatchAttendancePage'));
 const FacultyActionPage = lazy(() => import('./pages/CommonPages/FacultyActionPage'));
 const BatchWiseReport = lazy(() => import('./pages/CommonPages/BatchWiseReportPage'));
+const AtRiskStudentsPage = lazy(() => import('./pages/CommonPages/AtRiskStudentsPage'));
+const AIAssistantPage = lazy(() => import('./pages/CommonPages/AIAssistantPage'));
 
 // 2. Admin Pages
 const AdminDashboard = lazy(() => import('./pages/AdminPages/AdminDashboard'));
@@ -117,6 +119,8 @@ const AppRoutes = () => {
           <Route path="/mark-attendance" element={<FacultyMarkAttendancePage />} />
           <Route path="/batch-report" element={<BatchWiseReport />} />
           <Route path="/faculty/action" element={<FacultyActionPage />} />
+          <Route path="/at-risk-students" element={<AtRiskStudentsPage />} />
+          <Route path="/ai-assistant" element={<AIAssistantPage />} />
         </Route>
 
         {/* --- Admin Only Routes --- */}

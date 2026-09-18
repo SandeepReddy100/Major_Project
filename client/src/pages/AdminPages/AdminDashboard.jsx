@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, UserCheck, CalendarCheck, FileText, ArrowRight, AlertCircle, Settings } from 'lucide-react';
+import { Users, UserCheck, CalendarCheck, FileText, ArrowRight, AlertCircle, Settings, AlertTriangle, Sparkles } from 'lucide-react';
 import Header from '../../components/Header';
 import { useAuth } from '../../context/AuthContext'; 
 import Loader from '../../components/Loader';
@@ -256,6 +256,8 @@ const AdminDashboardPage = () => {
         { title: "Manage Faculty", icon: <UserCheck className="w-6 h-6 lg:w-7 lg:h-7 text-green-600" />, count: processedData.stats.totalFaculty, description: "View, Add, or Edit Faculty Details", bgColor: "bg-gradient-to-br from-green-100 via-green-50 to-teal-50", path: "/admin/manage-faculty" },
         { title: "Manage Attendance", icon: <CalendarCheck className="w-6 h-6 lg:w-7 lg:h-7 text-purple-600" />, description: "Mark or Update Student Attendance", bgColor: "bg-gradient-to-br from-purple-100 via-purple-50 to-indigo-50", path: "/admin/manage-attendance" },
         { title: "System Administration", icon: <Settings className="w-6 h-6 lg:w-7 lg:h-7 text-orange-600" />, description: "Manage Semesters, Users & System Data...", bgColor: "bg-gradient-to-br from-orange-100 via-orange-50 to-amber-50", path: "/admin/system-admin" },
+        { title: "At-Risk Students", icon: <AlertTriangle className="w-6 h-6 lg:w-7 lg:h-7 text-red-600" />, description: "Identify students requiring attendance intervention", bgColor: "bg-gradient-to-br from-red-100 via-red-50 to-orange-50", path: "/at-risk-students" },
+        { title: "AI Faculty Assistant", icon: <Sparkles className="w-6 h-6 lg:w-7 lg:h-7 text-emerald-600" />, description: "Ask questions about attendance, risk, and trends", bgColor: "bg-gradient-to-br from-emerald-100 via-emerald-50 to-teal-50", path: "/ai-assistant" },
     ];
 
     const sessionItems = [
